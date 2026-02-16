@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Thư Năm Mới 💌</title>
+<style>
+body{
+    margin:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:'Segoe UI',sans-serif;
+    background:linear-gradient(120deg,#ff4e50,#f9d423);
+    overflow:hidden;
+}
+canvas{position:fixed;top:0;left:0;z-index:0;}
+
+.envelope{
+    width:320px;
+    height:220px;
+    background:#e53935;
+    position:relative;
+    border-radius:10px;
+    cursor:pointer;
+    box-shadow:0 15px 30px rgba(0,0,0,0.3);
+    z-index:1;
+}
+.envelope:before{
+    content:"";
+    position:absolute;
+    border-left:160px solid transparent;
+    border-right:160px solid transparent;
+    border-top:110px solid #c62828;
+    top:-1px;
+}
+
+.letter{
+    position:absolute;
+    width:300px;
+    height:330px;
+    background:white;
+    top:10px;
+    left:10px;
+    border-radius:10px;
+    padding:18px;
+    box-sizing:border-box;
+    transform:translateY(120px);
+    transition:0.7s;
+    opacity:0;
+    text-align:center;
+    overflow:auto;
+}
+.open .letter{ transform:translateY(-250px); opacity:1; }
+
+button{
+    margin-top:10px;
+    padding:12px 20px;
+    border:none;
+    border-radius:10px;
+    background:#ffeb3b;
+    font-weight:bold;
+    cursor:pointer;
+}
+button:disabled{
+    background:#ccc;
+    cursor:not-allowed;
+}
+
+.money{
+    font-size:30px;
+    margin-top:10px;
+    color:#00c853;
+    font-weight:bold;
+}
+</style>
+</head>
+<body>
+
+<canvas id="fireworks"></canvas>
+
+<div class="envelope" onclick="openLetter()" id="env">
+    <div class="letter">
+        <h2>Happy New Year 💖</h2>
+
+        <p>Anh biết một năm vừa rồi tụi mình đã trải qua rất nhiều chuyện…
+        có lúc vui, có lúc buồn. Năm mới anh mong mình sẽ hiểu và yêu nhau nhiều hơn mỗi ngày ❤️</p>
+
+        <p><b>
+        Hy vọng lì xì em rút được thật to,
+        còn anh thì trúng thưởng em là con dâu của mẹ anh là đủ rồi hí hí 🥰
+        </b></p>
+
+        <button id="btn" onclick="rutLiXi(event)">Rút lì xì 🧧</button>
+        <div class="money" id="ketqua"></div>
+    </div>
+</div>
+
+<script>
+let daRut = false;
+
+function openLetter(){
+    document.getElementById("env").classList.add("open");
+    startFireworks();
+}
+
+function rutLiXi(e){
+    e.stopPropagation();
+    if(daRut) return;
+
+    let r = Math.floor(Math.random()*(250000-50000+1))+50000;
+    document.getElementById("ketqua").innerHTML =
+        "Em nhận được: "+ r.toLocaleString() +"đ 💰";
+
+    daRut = true;
+    document.getElementById("btn").disabled = true;
+    document.getElementById("btn").innerHTML = "Đã rút rồi 😝";
+}
+
+/* PHÁO HOA */
+const canvas=document.getElementById("fireworks");
+const ctx=canvas.getContext("2d");
+canvas.width=innerWidth;
+canvas.height=innerHeight;
+let particles=[];
+function firework(){
+    let x=Math.random()*canvas.width;
+    let y=Math.random()*canvas.height/2;
+    for(let i=0;i<80;i++){
+        particles.push({x,y,angle:Math.random()*2*Math.PI,speed:Math.random()*5+2,life:60});
+    }
+}
+function startFireworks(){ setInterval(firework,800); }
+function animate(){
+    requestAnimationFrame(animate);
+    ctx.fillStyle="rgba(0,0,0,0.15)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    particles.forEach((p,i)=>{
+        p.x+=Math.cos(p.angle)*p.speed;
+        p.y+=Math.sin(p.angle)*p.speed;
+        p.life--;
+        ctx.fillStyle="hsl("+Math.random()*360+",100%,60%)";
+        ctx.fillRect(p.x,p.y,3,3);
+        if(p.life<=0) particles.splice(i,1);
+    });
+}
+animate();
+</script>
+
+</body>
+</html>
